@@ -14,6 +14,7 @@ from util cimport ifstream, ostringstream
 
 EPSILON_ID = 0
 EPSILON = u'\u03b5'
+libfst.PyFST_init_openfst()
 
 cdef bytes as_str(data):
     if isinstance(data, bytes):
@@ -354,6 +355,8 @@ cdef class {{fst}}(_Fst):
         """{{fst}}(isyms=None, osyms=None) -> empty finite-state transducer
         {{fst}}(source) -> copy of the source transducer"""
         if isinstance(source, {{fst}}):
+            # BROKEN - it does not copy source at all, gives SegmentationFault
+            self.fst = new libfst.{{fst}}()
             self.fst = <libfst.{{fst}}*> self.fst.Copy()
         else:
             self.fst = new libfst.{{fst}}()
@@ -491,6 +494,8 @@ cdef class {{fst}}(_Fst):
             raise ValueError('transducer symbol tables are not compatible for composition')
         cdef {{fst}} result = {{fst}}(isyms=self.isyms, osyms=other.osyms)
         libfst.Compose(self.fst[0], other.fst[0], result.fst)
+        if (result.fst.Properties(libfst.kError, True)):
+            raise ValueError('Result of libfst.Compose has property kError')
         return result
 
     def __rshift__({{fst}} x, {{fst}} y):
@@ -508,6 +513,8 @@ cdef class {{fst}}(_Fst):
             raise ValueError('transducers must use shared output symbol table')
         cdef {{fst}} result = {{fst}}(isyms=self.isyms, osyms=self.osyms)
         libfst.Intersect(self.fst[0], other.fst[0], result.fst)
+        if (result.fst.Properties(libfst.kError, True)):
+            raise ValueError('Result of libfst.Intersect has property kError')
         return result
 
     def __and__({{fst}} x, {{fst}} y):
@@ -520,6 +527,8 @@ cdef class {{fst}}(_Fst):
         if self.osyms:
             self.osyms.merge(other.osyms)
         libfst.Union(self.fst, other.fst[0])
+        if (self.fst.Properties(libfst.kError, True)):
+            raise ValueError('Result of libfst.Union has property kError')
 
     def union(self, {{fst}} other):
         """fst.union({{fst}} other) -> union of the two transducers
@@ -539,6 +548,9 @@ cdef class {{fst}}(_Fst):
         if self.osyms:
             self.osyms.merge(other.osyms)
         libfst.Concat(self.fst, other.fst[0])
+        if (self.fst.Properties(libfst.kError, True)):
+            raise ValueError('Result of libfst.Concat has property kError')
+
 
     def concatenation(self, {{fst}} other):
         """fst.concatenation({{fst}} other) -> concatenation of the two transducers
@@ -560,6 +572,8 @@ cdef class {{fst}}(_Fst):
             raise ValueError('transducers must use shared output symbol table')
         cdef {{fst}} result = {{fst}}(isyms=self.isyms, osyms=self.osyms)
         libfst.Difference(self.fst[0], other.fst[0], result.fst)
+        if (result.fst.Properties(libfst.kError, True)):
+            raise ValueError('Result of libfst.Difference has property kError')
         return result
 
     def __sub__({{fst}} x, {{fst}} y):
@@ -614,6 +628,8 @@ cdef class {{fst}}(_Fst):
             raise TypeError('Weight needs to have the path property and be right distributive')
         cdef {{fst}} result = {{fst}}(isyms=self.isyms, osyms=self.osyms)
         libfst.ShortestPath(self.fst[0], result.fst, n)
+        if (result.fst.Properties(libfst.kError, True)):
+            raise ValueError('Result of libfst.ShortestPath has property kError')
         return result
 
     def push(self, final=False, weights=False, labels=False):

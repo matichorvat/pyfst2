@@ -7,8 +7,12 @@ from util cimport ostream, istream
 
 cimport sym
 
+cdef extern from "init_openfst.h":
+    void PyFST_init_openfst()
+
 cdef extern from "<fst/fstlib.h>" namespace "fst":
     enum:
+        kError
         kIDeterministic
         kODeterministic
         kAcceptor

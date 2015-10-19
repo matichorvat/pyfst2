@@ -7,6 +7,7 @@ import yaml
 import pystache
 
 
+
 templates = [
     ('fst/_fst.pyx.tpl', 'fst/types.yml', 'fst/_fst.pyx'),
     ('fst/libfst.pxd.tpl', 'fst/types.yml', 'fst/libfst.pxd'),
@@ -52,7 +53,7 @@ ext_modules = [
     Extension(name='fst._fst',
               extra_compile_args=extra_compile_args,
               extra_link_args=extra_link_args,
-              sources=['fst/_fst.pyx'],
+              sources=['fst/_fst.pyx', 'fst/init_openfst.cpp'],
               language='c++',
               include_dirs=INC,
               libraries=['fst'],

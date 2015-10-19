@@ -9,15 +9,15 @@ def _make_transducer_class(clsname, parent):
         """Transducer(isyms=None, osyms=None) -> transducer with input/output symbol tables"""
         parent.__init__(self, isyms, osyms)
         self.start = self.add_state()
-        self.isyms = (isyms if isyms is not None else SymbolTable())
-        self.osyms = (osyms if osyms is not None else SymbolTable())
+        self.isyms = isyms # (isyms if isyms is not None else SymbolTable())
+        self.osyms = osyms # (osyms if osyms is not None else SymbolTable())
 
     def add_arc(self, src, tgt, ilabel, olabel, weight=None):
         """fst.add_arc(int source, int dest, ilabel, olabel, weight=None):
         add an arc source->dest labeled with labels ilabel:olabel and weighted with weight"""
         while src > len(self) - 1:
             self.add_state()
-        parent.add_arc(self, src, tgt, self.isyms[ilabel], self.osyms[olabel],
+        parent.add_arc(self, src, tgt, self.isyms[ilabel] if self.isyms is not None else ilabel, self.osyms[olabel] if self.osyms is not None else olabel,
                 weight=weight)
 
     def __getitem__(self, stateid):
@@ -44,7 +44,7 @@ class Transducer(object):
 def _make_acceptor_class(clsname, parent):
     def __init__(self, syms=None):
         """Acceptor(syms=None) -> acceptor transducer with an input/output symbol table"""
-        syms = (syms if syms is not None else SymbolTable())
+        syms = syms # (syms if syms is not None else SymbolTable())
         parent.__init__(self, syms, syms)
 
     def add_arc(self, src, tgt, label, weight=None):

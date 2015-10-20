@@ -100,6 +100,10 @@ cdef extern from "<fst/fstlib.h>" namespace "fst":
     cdef cppclass ArcMapper:
         pass
 
+    cdef cppclass EncodeMapper[A]:
+        EncodeMapper(int flags, EncodeType type) except +
+        EncodeMapper(const EncodeMapper[A]& mapper, EncodeType type) except +
+
 {{#types}}
     cdef cppclass Plus{{arc}}Mapper "fst::PlusMapper<fst::{{arc}}>"(ArcMapper):
         Plus{{arc}}Mapper({{weight}})
@@ -139,6 +143,15 @@ cdef extern from "<fst/fstlib.h>" namespace "fst":
         kPushWeights
         kPushLabels
 
+    enum EncodeType:
+        ENCODE
+        DECODE
+
+    enum:
+        kEncodeLabels
+        kEncodeWeights
+        kEncodeFlags
+
     cdef bint Equivalent(Fst& fst1, Fst& fst2)
 
     # Constructive operations
@@ -170,6 +183,8 @@ cdef extern from "<fst/fstlib.h>" namespace "fst":
 {{#types}}
     cdef void ArcSort(MutableFst* fst, ILabelCompare[{{arc}}]& compare)
     cdef void ArcSort(MutableFst* fst, OLabelCompare[{{arc}}]& compare)
+    cdef void Encode(MutableFst* ifst, EncodeMapper[{{arc}}]* encoder)
+    cdef void Decode(MutableFst* ifst, const EncodeMapper[{{arc}}]& encoder)
     cdef void Prune(MutableFst* ifst, {{weight}} threshold)
     cdef void Connect(MutableFst *fst)
     cdef void {{arc}}Reweight "fst::Reweight<fst::{{arc}}>" (MutableFst* fst,

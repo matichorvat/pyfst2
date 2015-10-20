@@ -783,6 +783,38 @@ cdef class {{fst}}(_Fst):
         libfst.Replace(label_fst_pairs, result.fst, self.osyms['__ROOT__'], epsilon)
         return result
 
+    def encode(self, encode_labels=True, encode_weights=False):
+        """fst.encode(encode_labels=True, encode_weights=False): encode the transducer
+        encode_labels: encode arc labels
+        encode_weights: encode arc weights
+        """
+        cdef libfst.EncodeMapper[libfst.{{arc}}]* encoder
+
+        if encode_labels and encode_weights:
+            encoder = new libfst.EncodeMapper[libfst.{{arc}}](libfst.kEncodeFlags, libfst.ENCODE)
+        elif encode_labels:
+            encoder = new libfst.EncodeMapper[libfst.{{arc}}](libfst.kEncodeLabels, libfst.ENCODE)
+        elif encode_weights:
+            encoder = new libfst.EncodeMapper[libfst.{{arc}}](libfst.kEncodeWeights, libfst.ENCODE)
+        else:
+            raise Exception('Either label or weight encoding option need to be specified')
+
+        libfst.Encode(self.fst, encoder)
+
+        enc = Encoder{{arc}}()
+        enc.add_encoder(encoder)
+
+        return enc
+
+    def decode(self, encoder_obj):
+        """fst.decode(encoder): decode the transducer
+        encoder_obj: encoder object constructed when the transducer was encoded
+        """
+        cdef libfst.EncodeMapper[libfst.{{arc}}]* encoder = (<Encoder{{arc}}> encoder_obj).encoder
+        cdef libfst.EncodeMapper[libfst.{{arc}}]* decoder = new libfst.EncodeMapper[libfst.{{arc}}](encoder[0], libfst.DECODE)
+
+        libfst.Decode(self.fst, decoder[0])
+
     def random_generate(self, n_path=1, max_len=None, uniform=True, weighted=False):
         if uniform:
             return self.uniform_generate(n_path, max_len, weighted)
@@ -848,5 +880,15 @@ cdef class {{fst}}(_Fst):
             # Replace double labels (a:a) with simple labels (a)
             out_str = re.sub(r'label = "(.+):\1(["\/])', r'label = "\1\2', out_str)
         return out_str
+
+cdef class Encoder{{arc}}:
+    cdef libfst.EncodeMapper[libfst.{{arc}}]* encoder
+
+    cdef add_encoder(self, libfst.EncodeMapper[libfst.{{arc}}]* encoder):
+        self.encoder = encoder
+
+    def __dealloc__(self):
+        del self.encoder
+
 
 {{/types}}

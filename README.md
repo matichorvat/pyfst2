@@ -58,7 +58,7 @@ export PYTHONPATH=$OPENFSTDIR/lib/python2.7/site-packages:$PYTHONPATH' >> ~/.bas
 
 ### Other
 
-Install python libraries ``sudo pip install --upgrade pyyaml pystache cython``
+Install python libraries ``sudo pip install --upgrade pyyaml pystache cython distribute``
 
 ## Installation
 

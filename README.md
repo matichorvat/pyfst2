@@ -8,7 +8,7 @@ Forked from: https://github.com/UFAL-DSG/pyfst
 
 ## Installation
 
-1. Install OpenFst 1.3.4
+1. Install OpenFst 1.5.0
 2. Install requirements ``sudo pip install --upgrade pyyaml pystache cython``
 3. Build the fork using `setup.py`
 

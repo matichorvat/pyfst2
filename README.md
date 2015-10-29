@@ -28,7 +28,7 @@ echo $PREFIX
 mkdir -p openfst
 cd openfst
 wget http://www.openfst.org/twiki/pub/FST/FstDownload/openfst-1.5.0.tar.gz
-tar xzf openfst-1.3.4.tar.gz
+tar xzf openfst-1.5.0.tar.gz
 ```
 
 #### 3. Build OpenFST (specify configure options, e.g. FAR, PDT, etc., as desired)

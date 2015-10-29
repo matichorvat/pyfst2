@@ -815,6 +815,25 @@ cdef class {{fst}}(_Fst):
 
         libfst.Decode(self.fst, decoder[0])
 
+    def determinize_minimize_transducer(self):
+        """fst.determinize() -> determinized transducer by first encoding its labels"""
+        # Create copy in order to not modify the original fst
+        cdef {{fst}} tmp = self.copy()
+
+        # Encode arc labels
+        encoder = tmp.encode()
+
+        # Determinize encoded FST
+        result = tmp.determinize()
+
+        # Minimize FST
+        result.minimize()
+
+        # Decode arc labels
+        result.decode(encoder)
+
+        return result
+
     def random_generate(self, n_path=1, max_len=None, uniform=True, weighted=False):
         if uniform:
             return self.uniform_generate(n_path, max_len, weighted)

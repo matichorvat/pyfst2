@@ -202,6 +202,7 @@ cdef extern from "<fst/fstlib.h>" namespace "fst":
              bint epsilon_on_replace)
 {{/types}}
 
+
 cdef extern from "<fst/script/draw.h>" namespace "fst":
     cdef cppclass FstDrawer[A]:
         FstDrawer(Fst& fst, 
@@ -221,3 +222,7 @@ cdef extern from "<fst/script/draw.h>" namespace "fst":
                   bint show_weight_one)
 
         void Draw(ostream *strm, string &dest)
+
+cdef extern from "phi_compose.cpp" namespace "fst":
+    cdef void PhiCompose(Fst &ifst1, Fst &ifst2, MutableFst* ofst, int phi_label)
+

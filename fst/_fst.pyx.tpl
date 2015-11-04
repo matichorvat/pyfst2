@@ -498,6 +498,21 @@ cdef class {{fst}}(_Fst):
             raise ValueError('Result of libfst.Compose has property kError')
         return result
 
+    def phi_compose(self, {{fst}} other, int phi_label):
+        """fst.phi_compose({{fst}} other) -> composed transducer with phi transitions
+        It requires other to be input label sorted, otherwise it will segfault/produce errors"""
+
+        if (self.osyms or other.isyms) and (self.osyms != other.isyms):
+            raise ValueError('transducer symbol tables are not compatible for composition')
+
+        cdef {{fst}} result = {{fst}}(isyms=self.isyms, osyms=other.osyms)
+
+        libfst.PhiCompose(self.fst[0], other.fst[0], result.fst, phi_label)
+
+        if (result.fst.Properties(libfst.kError, True)):
+            raise ValueError('Result of libfst.Compose has property kError')
+        return result
+
     def __rshift__({{fst}} x, {{fst}} y):
         return x.compose(y)
 
@@ -908,6 +923,5 @@ cdef class Encoder{{arc}}:
 
     def __dealloc__(self):
         del self.encoder
-
 
 {{/types}}

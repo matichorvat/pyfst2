@@ -2,5 +2,8 @@ fst/_fst.pyx
 fst/libfst.pxd
 fst/_fst.cpp
 examples/binary.fst
+*.pyc
 fst/_fst.so
 build
+.idea
+venv

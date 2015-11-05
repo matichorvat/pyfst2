@@ -93,7 +93,7 @@ Example usage::
 setup(
     name='pyfst',
     cmdclass={'build_ext': pre_build_ext},
-    version='0.2.3dev',
+    version='0.5',
     url='http://pyfst.github.io',
     author='Victor Chahuneau, Ondrej Platek',
     description='A Python interface to OpenFst.',
@@ -106,6 +106,6 @@ setup(
     packages=['fst'],
     ext_modules=ext_modules,
     test_suite='nose.collector',
-    install_requires=['cython>=0.21', 'pystache>=0.5', 'pyyaml>=3.11'],
+    install_requires=['cython>=0.23', 'pystache>=0.5', 'pyyaml>=3.11'],
     tests_require=['nose>=1.0'],
 )

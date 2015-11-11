@@ -62,7 +62,7 @@ Install python libraries ``sudo pip install --upgrade pyyaml pystache cython dis
 
 ## Installation
 
-If installing as a library: ``LIBRARY_PATH=$OPENFSTDIR/lib:$OPENFSTDIR/lib/fst CPLUS_INCLUDE_PATH=$OPENFSTDIR/include python setup.py python setup.py install``
+If installing as a library: ``LIBRARY_PATH=$OPENFSTDIR/lib:$OPENFSTDIR/lib/fst CPLUS_INCLUDE_PATH=$OPENFSTDIR/include python setup.py install``
 
 If installing to local directory (e.g. for development): ``LIBRARY_PATH=$OPENFSTDIR/lib:$OPENFSTDIR/lib/fst CPLUS_INCLUDE_PATH=$OPENFSTDIR/include python setup.py build_ext --inplace``
 

@@ -802,6 +802,7 @@ cdef class {{fst}}(_Fst):
         """fst.encode(encode_labels=True, encode_weights=False): encode the transducer
         encode_labels: encode arc labels
         encode_weights: encode arc weights
+        Make sure to delete the Encoder object after being done with it
         """
         cdef libfst.EncodeMapper[libfst.{{arc}}]* encoder
 
@@ -922,6 +923,7 @@ cdef class Encoder{{arc}}:
         self.encoder = encoder
 
     def __dealloc__(self):
-        del self.encoder
+        if hasattr(self, 'encoder'):
+            del self.encoder
 
 {{/types}}

@@ -637,12 +637,12 @@ cdef class {{fst}}(_Fst):
         dist = [{{weight}}(distances[i].Value()) for i in range(distances.size())]
         return dist
 
-    def shortest_path(self, unsigned n=1):
+    def shortest_path(self, unsigned n=1, bint unique=False):
         """fst.shortest_path(int n=1) -> transducer containing the n shortest paths"""
         if not isinstance(self, StdVectorFst):
             raise TypeError('Weight needs to have the path property and be right distributive')
         cdef {{fst}} result = {{fst}}(isyms=self.isyms, osyms=self.osyms)
-        libfst.ShortestPath(self.fst[0], result.fst, n)
+        libfst.ShortestPath(self.fst[0], result.fst, n, unique)
         if (result.fst.Properties(libfst.kError, True)):
             raise ValueError('Result of libfst.ShortestPath has property kError')
         return result

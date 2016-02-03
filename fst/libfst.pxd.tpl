@@ -55,7 +55,7 @@ cdef extern from "<fst/fstlib.h>" namespace "fst":
         sym.SymbolTable* MutableOutputSymbols()
 
     cdef cppclass FstHeader:
-        void Read(istream& stream, string& source)
+        void Read(istream& stream, string& source) except +
         string ArcType()
         string FstType()
 
@@ -88,8 +88,8 @@ cdef extern from "<fst/fstlib.h>" namespace "fst":
         LogWeight Final(int s)
         void AddArc(int s, LogArc &arc)
 
-    cdef StdVectorFst* StdVectorFstRead "fst::StdVectorFst::Read" (string& filename)
-    cdef LogVectorFst* LogVectorFstRead "fst::VectorFst<fst::LogArc>::Read" (string& filename)
+    cdef StdVectorFst* StdVectorFstRead "fst::StdVectorFst::Read" (string& filename) except +
+    cdef LogVectorFst* LogVectorFstRead "fst::VectorFst<fst::LogArc>::Read" (string& filename) except +
 
     cdef cppclass ILabelCompare[A]:
         pass
@@ -155,51 +155,51 @@ cdef extern from "<fst/fstlib.h>" namespace "fst":
     cdef bint Equivalent(Fst& fst1, Fst& fst2)
 
     # Constructive operations
-    cdef void Compose(Fst &ifst1, Fst &ifst2, MutableFst* ofst)
-    cdef void Determinize(Fst& ifst, MutableFst* ofst)
-    cdef void Difference(Fst &ifst1, Fst &ifst2, MutableFst* ofst)
-    cdef void Intersect(Fst &ifst1, Fst &ifst2, MutableFst* ofst)
-    cdef void Reverse(Fst &ifst, MutableFst* ofst)
-    cdef void ShortestPath(Fst &ifst, MutableFst* ofst, unsigned n, bint unique)
-    cdef void ArcMap (Fst &ifst, MutableFst* ofst, ArcMapper mapper)
+    cdef void Compose(Fst &ifst1, Fst &ifst2, MutableFst* ofst) except +
+    cdef void Determinize(Fst& ifst, MutableFst* ofst) except +
+    cdef void Difference(Fst &ifst1, Fst &ifst2, MutableFst* ofst) except +
+    cdef void Intersect(Fst &ifst1, Fst &ifst2, MutableFst* ofst) except +
+    cdef void Reverse(Fst &ifst, MutableFst* ofst) except +
+    cdef void ShortestPath(Fst &ifst, MutableFst* ofst, unsigned n, bint unique) except +
+    cdef void ArcMap (Fst &ifst, MutableFst* ofst, ArcMapper mapper) except +
 {{#types}}
-    cdef void ShortestDistance(Fst &fst, vector[{{weight}}]* distance, bint reverse)
+    cdef void ShortestDistance(Fst &fst, vector[{{weight}}]* distance, bint reverse) except +
     cdef void {{arc}}PushInitial "fst::Push<fst::{{arc}}, fst::REWEIGHT_TO_INITIAL>" (Fst &ifst,
-        MutableFst* ofst, uint32_t ptype)
+        MutableFst* ofst, uint32_t ptype) except +
     cdef void {{arc}}PushFinal "fst::Push<fst::{{arc}}, fst::REWEIGHT_TO_FINAL>" (Fst &ifst,
-        MutableFst* ofst, uint32_t ptype)
-    cdef void RandGen(Fst &ifst, MutableFst* ofst, const RandGenOptions& opts)
+        MutableFst* ofst, uint32_t ptype) except +
+    cdef void RandGen(Fst &ifst, MutableFst* ofst, const RandGenOptions& opts) except +
 {{/types}}
     # Destructive operations
-    cdef void Closure(MutableFst* ifst, ClosureType type)
-    cdef void Invert(MutableFst* ifst)
-    cdef void Minimize(MutableFst* fst)
-    cdef void Project(MutableFst* fst, ProjectType type)
+    cdef void Closure(MutableFst* ifst, ClosureType type) except +
+    cdef void Invert(MutableFst* ifst) except +
+    cdef void Minimize(MutableFst* fst) except +
+    cdef void Project(MutableFst* fst, ProjectType type) except +
     cdef void Relabel(MutableFst* fst, 
             vector[pair[int, int]]& ipairs,
-            vector[pair[int, int]]& opairs)
-    cdef void RmEpsilon(MutableFst* fst)
-    cdef void TopSort(MutableFst* fst)
+            vector[pair[int, int]]& opairs) except +
+    cdef void RmEpsilon(MutableFst* fst) except +
+    cdef void TopSort(MutableFst* fst) except +
 {{#types}}
-    cdef void ArcSort(MutableFst* fst, ILabelCompare[{{arc}}]& compare)
-    cdef void ArcSort(MutableFst* fst, OLabelCompare[{{arc}}]& compare)
-    cdef void Encode(MutableFst* ifst, EncodeMapper[{{arc}}]* encoder)
-    cdef void Decode(MutableFst* ifst, const EncodeMapper[{{arc}}]& encoder)
-    cdef void Prune(MutableFst* ifst, {{weight}} threshold)
-    cdef void Connect(MutableFst *fst)
+    cdef void ArcSort(MutableFst* fst, ILabelCompare[{{arc}}]& compare) except +
+    cdef void ArcSort(MutableFst* fst, OLabelCompare[{{arc}}]& compare) except +
+    cdef void Encode(MutableFst* ifst, EncodeMapper[{{arc}}]* encoder) except +
+    cdef void Decode(MutableFst* ifst, const EncodeMapper[{{arc}}]& encoder) except +
+    cdef void Prune(MutableFst* ifst, {{weight}} threshold) except +
+    cdef void Connect(MutableFst *fst) except +
     cdef void {{arc}}Reweight "fst::Reweight<fst::{{arc}}>" (MutableFst* fst,
-        vector[{{weight}}] potentials, ReweightType rtype)
+        vector[{{weight}}] potentials, ReweightType rtype) except +
 {{/types}}
     # Other
-    cdef void Union(MutableFst* ifst1, Fst &ifst2)
-    cdef void Concat(MutableFst* ifst1, Fst &ifst2)
+    cdef void Union(MutableFst* ifst1, Fst &ifst2) except +
+    cdef void Concat(MutableFst* ifst1, Fst &ifst2) except +
 
 {{#types}}
     ctypedef Fst* Const{{fst}}Ptr 'const fst::Fst<fst::{{arc}}>*'
     cdef void Replace(vector[pair[int, Const{{fst}}Ptr]] label_fst_pairs, 
              MutableFst *ofst,
              int root,
-             bint epsilon_on_replace)
+             bint epsilon_on_replace) except +
 {{/types}}
 
 
@@ -224,5 +224,5 @@ cdef extern from "<fst/script/draw.h>" namespace "fst":
         void Draw(ostream *strm, string &dest)
 
 cdef extern from "phi_compose.cpp" namespace "fst":
-    cdef void PhiCompose(Fst &ifst1, Fst &ifst2, MutableFst* ofst, int phi_label)
+    cdef void PhiCompose(Fst &ifst1, Fst &ifst2, MutableFst* ofst, int phi_label) except +
 
